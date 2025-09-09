@@ -4,7 +4,7 @@
 
 
 int leer_y_split(char *arr[]) {
-    static char input[MAX_LENGTH];
+    char input[MAX_LENGTH];
     int count = 0;
     char *p = input;
 

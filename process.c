@@ -10,8 +10,13 @@ void ejecutar_comando(char **arr) {
         perror("Error en fork()");
         exit(1);
     } else if (pid == 0) {
-        execvp(arr[0], arr);   // ejecuta el comando ingresado
-        _exit(127);
+        if(arr[0] == NULL) {
+            _exit(0); // Si no hay comando, el hijo termina
+        }
+        else {
+            execvp(arr[0], arr);   // ejecuta el comando ingresado
+            _exit(127);
+        }
     } else {
         wait(NULL); // Espera a que el hijo termine
     }
