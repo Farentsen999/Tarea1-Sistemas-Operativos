@@ -1,12 +1,14 @@
 #include <stdio.h>
 #include <unistd.h>
+#include <string.h>
+#include <stdlib.h>
 #include "prompt.h"
 
 
 int leer_y_split(char *arr[]) {
     char input[MAX_LENGTH];
     int count = 0;
-    char *p = input;
+
 
     printf("Ingresar Comando: ");
     fflush(stdout); //asegura que el prompt se imprima antes de leer la entrada
@@ -14,7 +16,7 @@ int leer_y_split(char *arr[]) {
     if(fgets(input, MAX_LENGTH, stdin) == NULL) {
         return -1;
     }
-    input[strcspn(input, "\n")] = '\0'; // Elimina el salto de linea qu eañade fgets al final y lo cambia por \0
+    input[strcspn(input, "\n")] = '\0'; // Elimina el salto de linea que añade fgets al final y lo cambia por \0
 
     if (strlen(input) == 0) {
         arr[0] = NULL;
@@ -23,8 +25,6 @@ int leer_y_split(char *arr[]) {
 
     char *token = strtok(input, " "); //divide la cadena en tokens separados por espacios
     while (token != NULL && count < MAX_STRINGS - 1) {
-        // Asigna memoria dinámicamente para cada string
-        arr[count] = (char *)malloc(strlen(token) + 1);
         strcpy(arr[count], token); // Copia el string a la posicion
         
         token = strtok(NULL, " "); //obtiene el siguiente token
