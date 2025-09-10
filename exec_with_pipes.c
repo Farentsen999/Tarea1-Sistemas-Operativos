@@ -48,17 +48,3 @@ void exec_with_pipes(char **comandos[], int pipes){
     close_pipes(fd, pipes);
     wait_pids(pids, pipes);
 }
-
-
-void main (void) {
-
-    char *cmd1[] = {"ls", "-l", NULL};
-    char *cmd2[] = {"grep", "^d", NULL};
-    char *cmd3[] = {"wc", "-l", NULL};
-
-    char **comandos[] = {cmd1, cmd2, cmd3};
-
-    exec_with_pipes(comandos, 2);
-
-
-}
