@@ -25,8 +25,7 @@ int leer_y_split(char *arr[]) {
 
     char *token = strtok(input, " "); //divide la cadena en tokens separados por espacios
     while (token != NULL && count < MAX_STRINGS - 1) {
-        strcpy(arr[count], token); // Copia el string a la posicion
-        
+        arr[count] = token; //almacena cada token en el arreglo
         token = strtok(NULL, " "); //obtiene el siguiente token
         count++;
     }
