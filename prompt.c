@@ -8,22 +8,30 @@ int leer_y_split(char *arr[]) {
     int count = 0;
     char *p = input;
 
-    printf("Ingrese un string: ");
-    scanf(" %[^\n]", input);
-
-    while (*p != '\0') {
-        while (*p == ' ') p++;
-        if (*p == '\0') break;
-
-        arr[count++] = p;
-
-        while (*p != ' ' && *p != '\0') p++;
-        if (*p == ' ') {
-            *p = '\0';
-            p++;
-        }
-        if (count >= MAX_STRINGS - 1) break; 
+    printf("Ingresar Comando: ");
+    fflush(stdout); //asegura que el prompt se imprima antes de leer la entrada
+    
+    if(fgets(input, MAX_LENGTH, stdin) == NULL) {
+        return -1;
     }
-    arr[count] = NULL; // para el execvp
+    input[strcspn(input, "\n")] = '\0'; // Elimina el salto de linea qu eañade fgets al final y lo cambia por \0
+
+    if (strlen(input) == 0) {
+        arr[0] = NULL;
+        return 0;
+    }
+
+    char *token = strtok(input, " "); //divide la cadena en tokens separados por espacios
+    while (token != NULL && count < MAX_STRINGS - 1) {
+        // Asigna memoria dinámicamente para cada string
+        arr[count] = (char *)malloc(strlen(token) + 1);
+        strcpy(arr[count], token); // Copia el string a la posicion
+        
+        token = strtok(NULL, " "); //obtiene el siguiente token
+        count++;
+    }
+    
+    arr[count] = NULL; // Termina el array con NULL para execvp
+
     return count;
 }
