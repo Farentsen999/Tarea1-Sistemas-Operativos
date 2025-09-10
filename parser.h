@@ -1,8 +1,8 @@
-//
-// Created by sebastian on 9/10/25.
-//
+#ifndef PARSER_H
+#define PARSER_H
 
-#ifndef TAREA1_SISTEMAS_OPERATIVOS_PARSER_H
-#define TAREA1_SISTEMAS_OPERATIVOS_PARSER_H
+#define MAX_ARGS 64
 
-#endif //TAREA1_SISTEMAS_OPERATIVOS_PARSER_H
+void commandParser(char *inputTokens[], char *args[]);
+
+#endif
