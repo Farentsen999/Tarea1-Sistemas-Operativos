@@ -14,7 +14,9 @@ void ejecutar_comando(char **arr) {
             _exit(0); // Si no hay comando, el hijo termina
         }
         else {
-            execvp(arr[0], arr);   // ejecuta el comando ingresado
+            execvp(arr[0], arr); 
+            perror("Error, comando no encontrado\0"); 
+                // ejecuta el comando ingresado
             _exit(127);
         }
     } else {
