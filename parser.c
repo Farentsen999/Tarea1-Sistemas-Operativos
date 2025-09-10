@@ -4,7 +4,7 @@
 void commandParser(char *inputTokens[], char *args[], char **inputFile, char **outputFile) {
     int argCount = 0;
     int i = 0;
-
+//a
     *inputFile = NULL;
     *outputFile = NULL;
 
