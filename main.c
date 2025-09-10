@@ -9,6 +9,8 @@
 int main(void) {
     char *arr[MAX_STRINGS]; // areglo de strings
 	char *args[MAX_ARGS];
+    char *inputFile;
+    char *outputFile;
     int running = 1; // controla el bucle principal
     while (running) {
         leer_y_split(arr);
@@ -22,7 +24,7 @@ int main(void) {
             continue;
         }
 
-		commandParser(arr, args);
+		commandParser(arr, args, &inputFile, &outputFile);
 
         // Si el comando no es "exit", se ejecuta
         ejecutar_comando(args);
