@@ -25,7 +25,7 @@ void exec_with_pipes(char **comandos[], int pipes){
 
     for (int i = 0; i < pipes; i++){
         if (pipe(fd[i]) == -1) {
-            return 1;
+          
         }
     }
 
