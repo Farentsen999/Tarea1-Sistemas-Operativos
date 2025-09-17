@@ -29,7 +29,6 @@ int leer_y_split(char *arr[]) {
         token = strtok(NULL, " "); //obtiene el siguiente token
         count++;
     }
-    
     arr[count] = NULL; // Termina el array con NULL para execvp
 
     return count;

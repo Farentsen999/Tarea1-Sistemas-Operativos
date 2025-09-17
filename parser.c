@@ -1,6 +1,9 @@
-#include <string.h>
+#include "crear_archivo.h"
 #include "parser.h"
-
+#include <stdbool.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 void commandParser(char *inputTokens[], char *args[], char **inputFile, char **outputFile) {
     int argCount = 0;
     int i = 0;
@@ -18,6 +21,7 @@ void commandParser(char *inputTokens[], char *args[], char **inputFile, char **o
             i++;
             if (inputTokens[i] != NULL) {
                 *outputFile = inputTokens[i];
+                
             }
         } else if (strcmp(inputTokens[i], "|") == 0) {
             break;
