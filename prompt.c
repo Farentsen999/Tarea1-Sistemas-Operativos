@@ -5,7 +5,7 @@
 #include "prompt.h"
 
 
-int leer_y_split(char *arr[]) {
+int leer_y_split(char *arr[] ) {
     char input[MAX_LENGTH];
     int count = 0;
 

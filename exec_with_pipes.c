@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <sys/types.h>
+#include "config.h"
 
 void close_pipes(int fd[][2], int pipes){
     for (int i = 0; i < pipes; i++) {
