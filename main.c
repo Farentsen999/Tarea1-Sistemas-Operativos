@@ -4,6 +4,7 @@
 #include "process.h"
 #include "parser.h"
 #include <string.h>
+#include "config.h"
 
 
 int main(void) {
@@ -11,16 +12,14 @@ int main(void) {
 	char *args[MAX_ARGS];
     char *inputFile;
     char *outputFile;
-    int running = 1; // controla el bucle principal
-    while (running) {
+// controla el bucle principal
+    while (1) {
         leer_y_split(arr);
-
         if (arr[0] == NULL) {
             continue;
         }
-
         if (strcmp(arr[0], "exit") == 0) {
-            running = 0; // cambiar la condición para salir del ciclo
+           break; // cambiar la condición para salir del ciclo
             continue;
         }
 
