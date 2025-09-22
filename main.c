@@ -3,6 +3,7 @@
 #include "prompt.h"
 #include "process.h"
 #include "parser.h"
+#include "crear_archivo.h"
 #include <string.h>
 
 
@@ -27,6 +28,6 @@ int main(void) {
 		commandParser(arr, args, &inputFile, &outputFile);
 
         // Si el comando no es "exit", se ejecuta
-        ejecutar_comando(args);
+        ejecutar_comando(args, inputFile, outputFile);        
     }
 }

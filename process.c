@@ -1,25 +1,40 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "crear_archivo.h"
+#include <fcntl.h>
 #include <unistd.h>
 #include <sys/wait.h>
 
-void ejecutar_comando(char **arr) {
+void ejecutar_comando(char **args, char *inputFile, char *outputFile) {
     pid_t pid = fork();
-
     if (pid < 0) {
         perror("Error en fork()");
         exit(1);
     } else if (pid == 0) {
-        if(arr[0] == NULL) {
-            _exit(0); // Si no hay comando, el hijo termina
+        if(inputFile != NULL) {
+            int descriptorArchivoEntrada = open(inputFile, O_RDONLY);
+            if (descriptorArchivoEntrada < 0) {
+                perror("Error al abrir archivo de entrada");
+                _exit(1);
+            }
+            dup2(descriptorArchivoEntrada, STDIN_FILENO);
+            close(descriptorArchivoEntrada);
         }
-        else {
-            execvp(arr[0], arr); 
-            perror("Error, comando no encontrado\0"); 
-                // ejecuta el comando ingresado
-            _exit(127);
+
+        if(outputFile != NULL) {
+            int descriptorArchivoSalida = open(outputFile, O_WRONLY | O_TRUNC | O_CREAT, 0644);
+            if (escriptorArchivoSalida < 0) {
+                perror("Error al abrir/crear archivo de salida");
+                _exit(1);
+            }
+            dup2(descriptorArchivoSalida, STDOUT_FILENO);
+            close(descriptorArchivoSalida);
         }
-    } else {
-        wait(NULL); // Espera a que el hijo termine
+        execvp(args[0], args); 
+        perror("Error, comando no encontrado");
+        _exit(1);
+    }
+    else {
+        wait(NULL);
     }
 }
