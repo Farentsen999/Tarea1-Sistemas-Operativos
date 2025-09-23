@@ -20,7 +20,6 @@ void ejecutar_comando(char **args, char *inputFile, char *outputFile) {
             dup2(descriptorArchivoEntrada, STDIN_FILENO);
             close(descriptorArchivoEntrada);
         }
-<<<<<<< HEAD
 
         if(outputFile != NULL) {
             int descriptorArchivoSalida = open(outputFile, O_WRONLY | O_TRUNC | O_CREAT, 0644);
@@ -30,13 +29,6 @@ void ejecutar_comando(char **args, char *inputFile, char *outputFile) {
             }
             dup2(descriptorArchivoSalida, STDOUT_FILENO);
             close(descriptorArchivoSalida);
-=======
-        else {
-            execvp(arr[0], arr);  //cuando separa los espacios hacen que sean nulos y por eso no se puede crear archivos
-            perror("Error, comando no encontrado\0"); 
-                // ejecuta el comando ingresado
-            _exit(127);
->>>>>>> 1927b45e973be8d20d2ae1c4d6bfcbed62ca45d2
         }
         execvp(args[0], args); 
         perror("Error, comando no encontrado");
