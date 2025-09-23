@@ -3,7 +3,6 @@
 #include "prompt.h"
 #include "process.h"
 #include "parser.h"
-#include "crear_archivo.h"
 #include <string.h>
 #include "config.h"
 

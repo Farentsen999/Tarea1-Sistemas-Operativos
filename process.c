@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "crear_archivo.h"
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/wait.h>
@@ -23,7 +22,7 @@ void ejecutar_comando(char **args, char *inputFile, char *outputFile) {
 
         if(outputFile != NULL) {
             int descriptorArchivoSalida = open(outputFile, O_WRONLY | O_TRUNC | O_CREAT, 0644);
-            if (escriptorArchivoSalida < 0) {
+            if (descriptorArchivoSalida < 0) {
                 perror("Error al abrir/crear archivo de salida");
                 _exit(1);
             }

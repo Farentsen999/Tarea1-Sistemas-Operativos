@@ -1,5 +1,4 @@
 // Lista de las bibliotecaas locales
-#include "crear_archivo.h"
 #include "parser.h"
 #include "process.h"
 
@@ -45,7 +44,7 @@ void commandParser(char *inputTokens[], char *args[], char **inputFile, char **o
             }
             dup2(fd, STDOUT_FILENO); // redirigir stdout al archivo
             close(fd);
-            ejecutar_comando(args);   // ejecutar comando, se puede llamar a la función?
+            ejecutar_comando(args, *inputFile, *outputFile);   // ejecutar comando, se puede llamar a la función?
             exit(1); // al momento de finalizar el proceso se hace "dup_free", y el resto se imprime en la terminal
         } else if (pid > 0) { // padre
             waitpid(pid, NULL, 0); 
