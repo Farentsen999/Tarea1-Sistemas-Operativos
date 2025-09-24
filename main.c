@@ -11,6 +11,7 @@
 int main(void) {
     char *arr[MAX_STRINGS]; // areglo de strings
 	char *args[MAX_ARGS];
+    char *input_buffer; // Para almacenar el puntero a la memoria asignada
     /*/
     char *inputFile;
     char *outputFile;
@@ -18,11 +19,17 @@ int main(void) {
 
     // Controla el bucle principal
     while (1) {
-        leer_y_split(arr);
+        input_buffer = leer_y_split(arr);
         if (arr[0] == NULL) {
+            if (input_buffer != NULL) {
+                free(input_buffer);
+            }
             continue;
         }
         if (strcmp(arr[0], "exit") == 0) {
+            if (input_buffer != NULL) {
+                free(input_buffer);
+            }
             break;
         }
         //else if (strcmp(arr[0], "miprof") == 0) {
@@ -31,6 +38,11 @@ int main(void) {
         else {
             commandParser(arr, args);
             ejecutar_comando(args);   
+        }
+        
+        // Libera la memoria correctamente
+        if (input_buffer != NULL) {
+            free(input_buffer);
         }
     }
     return 0;

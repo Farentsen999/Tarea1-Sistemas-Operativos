@@ -42,7 +42,7 @@ char* lectura_infinita() {
     return buffer;
 }
 
-void leer_y_split(char *arr[]) {
+char* leer_y_split(char *arr[]) {
     printf("Ingresar Comando: ");
     fflush(stdout); //asegura que el prompt se imprima antes de leer la entrada
     
@@ -67,4 +67,6 @@ void leer_y_split(char *arr[]) {
     }
 
     arr[count] = NULL; // Termina el array con NULL para execvp
+    
+    return input; // Devuelve el puntero para poder hacer free() después
 }
