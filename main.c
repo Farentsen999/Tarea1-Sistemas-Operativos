@@ -9,12 +9,14 @@
 
 
 int main(void) {
-    char *arr[MAX_LENGTH];
-    char *args[MAX_ARGS];
+    char *arr[MAX_STRINGS]; // areglo de strings
+	char *args[MAX_ARGS];
+    /*/
     char *inputFile;
     char *outputFile;
-// controla el bucle principal
-// habilitar para infinitos argumentos
+    /*/
+
+    // Controla el bucle principal
     while (1) {
         leer_y_split(arr);
         if (arr[0] == NULL) {
@@ -27,8 +29,8 @@ int main(void) {
                 //ejecutar_miProof(args);
            // }
         else {
-            commandParser(arr, args, &inputFile, &outputFile);
-            ejecutar_comando(args, inputFile, outputFile);   
+            commandParser(arr, args);
+            ejecutar_comando(args);   
         }
     }
     return 0;

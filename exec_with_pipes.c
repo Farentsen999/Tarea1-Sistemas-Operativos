@@ -3,6 +3,7 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 #include "config.h"
+#include <stdlib.h>
 
 void close_pipes(int fd[][2], int pipes){
     for (int i = 0; i < pipes; i++) {
@@ -24,9 +25,11 @@ void exec_with_pipes(char **comandos[], int pipes){
 
     pid_t pids[procesos];
 
-    for (int i = 0; i < pipes; i++){
+    for (int i = 0; i < pipes; i++) {
         if (pipe(fd[i]) == -1) {
-          
+            perror("pipe");
+            close_pipes(fd, i);   
+            exit(1);
         }
     }
 
@@ -35,11 +38,12 @@ void exec_with_pipes(char **comandos[], int pipes){
         pids[i] = fork();
 
         if (pids[i] == 0){
-            if (i>0){
-                dup2(fd[i-1][0], STDIN_FILENO);
-            }
+            
             if (i<pipes){
                 dup2(fd[i][1], STDOUT_FILENO);
+            }
+            if (i>0){
+                dup2(fd[i-1][0], STDIN_FILENO);
             }
             close_pipes(fd, pipes);
             execvp(comandos[i][0], comandos[i]);

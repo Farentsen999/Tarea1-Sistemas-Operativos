@@ -1,38 +1,69 @@
 // Lista de las bibliotecaas locales
 #include "parser.h"
 #include "process.h"
+#include "exec_with_pipes.h"
+#include "config.h"
 
 // bibliotecas generales
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <fcntl.h>   // para open
 #include <unistd.h> 
 #include <string.h>
 #include <sys/wait.h>
 
-void commandParser(char *inputTokens[], char *args[], char **inputFile, char **outputFile) {
-    int argCount = 0;
-    
-    *inputFile = NULL;
-    *outputFile = NULL;
-
+void commandParser(char *inputTokens[], char *args[]) {
+    int arg_count = 0;
+    int pipes = 0;
+    char *command_line[MAX_STRINGS][MAX_ARGS];
+    char **comandos[MAX_STRINGS]; 
 
     for (int i = 0; inputTokens[i] != NULL; i++) {
+        if (strcmp(inputTokens[i], "|") == 0) {
+            command_line[pipes][arg_count] = NULL;
+            comandos[pipes] = command_line[pipes]; 
+            pipes++;
+            arg_count = 0;
+            continue;
+        } else{
+            command_line[pipes][arg_count++] = inputTokens[i];
+        }
+    }
+    
+    command_line[pipes][arg_count] = NULL;
+    comandos[pipes] = command_line[pipes]; 
+
+    if (pipes != 0)
+    {
+        exec_with_pipes(comandos, pipes);
+    } else {            // SIN PIPES
+        for (int i = 0; inputTokens[i] != NULL; i++) {
+            args[i] = inputTokens[i];
+        }
+        args[arg_count] = NULL;
+    }
+
+    
+    /*/
+    *inputFile = NULL;
+    *outputFile = NULL;
+    /*/
+
+        // PARA IMPLEMENTAR LUEGO
+        /*/
         if (strcmp(inputTokens[i], "<") == 0 && inputTokens[i + 1] != NULL) {
             *inputFile = inputTokens[++i];
         } 
         else if (strcmp(inputTokens[i], ">") == 0 && inputTokens[i + 1] != NULL) {
             *outputFile = inputTokens[++i];
         } 
-        else if (strcmp(inputTokens[i], "|") == 0) {
-            break; // pipes luego
-        } 
         else {
             args[argCount++] = inputTokens[i];
             if (argCount >= MAX_ARGS - 1) break;
         }
-    }
+        /*/
+
+    /*/
     args[argCount] = NULL; 
     if (*outputFile != NULL) {
         pid_t pid = fork();
@@ -53,4 +84,5 @@ void commandParser(char *inputTokens[], char *args[], char **inputFile, char **o
             exit(1);
         }  
     }
+    /*/
 }
