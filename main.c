@@ -6,6 +6,8 @@
 #include <string.h>
 #include "config.h"
 #include "exec_with_pipes.h"
+#include <stdlib.h>
+#include "Comando_miprof.h"
 
 
 int main(void) {
@@ -31,11 +33,10 @@ int main(void) {
                 free(input_buffer);
             }
             break;
-        }
-        //else if (strcmp(arr[0], "miprof") == 0) {
-                //ejecutar_miProof(args);
-           // }
-        else {
+        } else if (strcmp(arr[0], "miprof") == 0) {
+   			 ejecutar_miprof(arr);
+    		continue;
+		} else {
             commandParser(arr, args);
             ejecutar_comando(args);   
         }

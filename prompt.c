@@ -50,7 +50,7 @@ char* leer_y_split(char *arr[]) {
     size_t count = 0;
 
     if (input == NULL) {
-        return -1; // Error en la lectura
+        return NULL; // Error en la lectura
     }
 
     if (strlen(input) == 0) {
