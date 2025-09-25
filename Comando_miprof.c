@@ -6,10 +6,10 @@
 #include <fcntl.h>
 #include <signal.h>
 #include <sys/resource.h>
+ 
+int timeout_ocurrio = 0; //Estoy solo funcionaría para un proceso, y no se podría hacer multimples miprof
 
-int timeout_ocurrio = 0;
-
-void timeout_handler(int sig) {
+void timeout_handler(int sig) { //miprof ejct, miprof ejecsave txt
     (void)sig;
     timeout_ocurrio = 1;
 }
@@ -100,11 +100,13 @@ void ejecutar_miprof(char **arr) {
                 if (timelimit > 0 && timeout_ocurrio) {
                     printf("Proceso finalizado por timeout\n");
                     kill(pid, SIGTERM);
-                    wait4(pid, &status, 0, &usage);
+                    wait4(pid, &status, 0, &usage); 
+                     timeout_ocurrio = 0;
                     break;
                 }
                 usleep(100000);
             } else if (w == pid) {
+                 timeout_ocurrio = 0;
                 break;
             } else {
                 perror("wait4");
