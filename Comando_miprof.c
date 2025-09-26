@@ -6,10 +6,11 @@
 #include <fcntl.h>
 #include <signal.h>
 #include <sys/resource.h>
- 
-int timeout_ocurrio = 0; //Estoy solo funcionaría para un proceso, y no se podría hacer multimples miprof
+#include "parser.h"
 
-void timeout_handler(int sig) { //miprof ejct, miprof ejecsave txt
+int timeout_ocurrio = 0; //Estoy solo funcionaría para un proceso, y no se podría hacer multiples miprof
+
+void timeout_handler(int sig) { //miprof ejec, miprof ejecsave txt
     (void)sig;
     timeout_ocurrio = 1;
 }
@@ -55,6 +56,10 @@ void ejecutar_miprof(char **arr) {
     // construir argv para exec
     char **comando = &arr[cmd_index];
 
+    char **comandos[MAX_STRINGS];
+    // Aqui se usa la funcion de parser.c para detectar pipes
+    int pipes = detectorCantidadPipes(comando, comandos)
+
     pid = fork();
     if (pid < 0) {
         perror("fork fallo");
@@ -93,20 +98,19 @@ void ejecutar_miprof(char **arr) {
             alarm(timelimit);
         }
 
-        // usar wait4 con WNOHANG en loop para obtener rusage del hijo específico
         while (1) {
             pid_t w = wait4(pid, &status, WNOHANG, &usage);
             if (w == 0) {
                 if (timelimit > 0 && timeout_ocurrio) {
                     printf("Proceso finalizado por timeout\n");
                     kill(pid, SIGTERM);
-                    wait4(pid, &status, 0, &usage); 
-                     timeout_ocurrio = 0;
+                    wait4(pid, &status, 0, &usage);
+                    timeout_ocurrio = 0;
                     break;
                 }
                 usleep(100000);
             } else if (w == pid) {
-                 timeout_ocurrio = 0;
+                timeout_ocurrio = 0;
                 break;
             } else {
                 perror("wait4");
@@ -116,42 +120,39 @@ void ejecutar_miprof(char **arr) {
 
         if (timelimit > 0) alarm(0);
 
-        /* Si se pidió ejecsave -> añadir métricas al archivo; si no -> imprimir por pantalla */
         if (archivoMiprof != NULL) {
             int fdm = open(archivoMiprof, O_WRONLY | O_CREAT | O_APPEND, 0664);
-            if (fdm != -1) { dprintf(fdm,
-                        "Tiempo de usuario: %ld.%06ld s\n"
-                        "Tiempo de sistema: %ld.%06ld s\n"
-                        "Memoria máxima: %ld KB\n"
-                        "----------------------------------------\n",
-                        usage.ru_utime.tv_sec, usage.ru_utime.tv_usec,
-                        usage.ru_stime.tv_sec, usage.ru_stime.tv_usec,
-                        usage.ru_maxrss);
+            if (fdm != -1) {
+                dprintf(fdm,
+                    "Tiempo de usuario: %ld.%06ld s\n"
+                    "Tiempo de sistema: %ld.%06ld s\n"
+                    "Memoria máxima: %ld KB\n"
+                    "----------------------------------------\n",
+                    usage.ru_utime.tv_sec, usage.ru_utime.tv_usec,
+                    usage.ru_stime.tv_sec, usage.ru_stime.tv_usec,
+                    usage.ru_maxrss);
                 close(fdm);
-                // escribir cabecera con dprintf (sin buffering)
                 dprintf(fdm, "Comando ejecutado: ");
                 for (int i = 0; comando[i] != NULL; ++i)
                     dprintf(fdm, "%s ", comando[i]);
                 dprintf(fdm, "\n");
-
                 dprintf(fdm,
-                        "Tiempo de usuario: %ld.%06ld s\n"
-                        "Tiempo de sistema: %ld.%06ld s\n"
-                        "Memoria máxima: %ld KB\n"
-                        "----------------------------------------\n",
-                        usage.ru_utime.tv_sec, usage.ru_utime.tv_usec,
-                        usage.ru_stime.tv_sec, usage.ru_stime.tv_usec,
-                        usage.ru_maxrss);
+                    "Tiempo de usuario: %ld.%06ld s\n"
+                    "Tiempo de sistema: %ld.%06ld s\n"
+                    "Memoria máxima: %ld KB\n"
+                    "----------------------------------------\n",
+                    usage.ru_utime.tv_sec, usage.ru_utime.tv_usec,
+                    usage.ru_stime.tv_sec, usage.ru_stime.tv_usec,
+                    usage.ru_maxrss);
                 close(fdm);
             } else {
                 perror("No se pudo abrir archivo para métricas");
             }
         } else {
-            /* no guardado: mostrar por pantalla */
             printf("Tiempo de usuario: %ld.%06ld s\n",
-                   usage.ru_utime.tv_sec, usage.ru_utime.tv_usec);
+                usage.ru_utime.tv_sec, usage.ru_utime.tv_usec);
             printf("Tiempo de sistema: %ld.%06ld s\n",
-                   usage.ru_stime.tv_sec, usage.ru_stime.tv_usec);
+                usage.ru_stime.tv_sec, usage.ru_stime.tv_usec);
             printf("Memoria máxima: %ld KB\n", usage.ru_maxrss);
         }
     }
