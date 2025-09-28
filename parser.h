@@ -1,7 +1,12 @@
+// parser.h
+
 #ifndef PARSER_H
 #define PARSER_H
 
-void commandParser(char *inputTokens[], char *args[]);
-int detectorCantidadPipes(char *inputTokens[], char **comandos[]);
+#include <stddef.h>
+#include "struct.h"
+
+// Firma corregida
+void commandParser(ArgArray *cmd);
 
 #endif

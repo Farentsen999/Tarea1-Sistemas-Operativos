@@ -1,8 +1,11 @@
 #include <stdio.h>
+#include "struct.h"
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
 #include "prompt.h"
+
+//manejo de errores
 
 char* lectura_infinita() {
     //se usa size_t en vez de int para aprovechar al maximo la capacidad de almacenamiento del computador
@@ -42,31 +45,66 @@ char* lectura_infinita() {
     return buffer;
 }
 
-char* leer_y_split(char *arr[]) {
+ArgArray guardaArgumentos(char *input) {
+    ArgArray arg_array;
+    initializeArgArray(&arg_array);
+
+    char *token = strtok(input, " ");
+
+    while (token != NULL) {
+        // Inicializar o expandir el arreglo si es necesario
+        if (arg_array.count + 1 >= arg_array.capacity) {
+            arg_array.capacity = (arg_array.capacity == 0) ? 10 : arg_array.capacity * 2;
+            char **temp = (char**)realloc(arg_array.cadenas, arg_array.capacity * sizeof(char*));
+            if (temp == NULL) {
+                perror("Error de reasignacion de memoria");
+                free(arg_array.cadenas);
+                arg_array.cadenas = NULL;
+                exit(EXIT_FAILURE);
+            }
+            arg_array.cadenas = temp;
+        }
+        
+        arg_array.cadenas[arg_array.count++] = strdup(token);
+        token = strtok(NULL, " ");
+    }
+    // Recorta el arreglo al tamano exacto
+    // No salgas del programa si esto falla, es mejor mantener la memoria extra
+    char **temp_realloc = (char**)realloc(arg_array.cadenas, (arg_array.count + 1) * sizeof(char*));
+    if (temp_realloc != NULL) {
+        arg_array.cadenas = temp_realloc;
+        arg_array.capacity = arg_array.count + 1;
+    }
+    
+    // Asegura que el ultimo puntero sea NULL
+    if (arg_array.cadenas != NULL) {
+        arg_array.cadenas[arg_array.count] = NULL;
+    }
+    return arg_array;
+}
+
+ArgArray leer_y_split() {
     printf("Ingresar Comando: ");
-    fflush(stdout); //asegura que el prompt se imprima antes de leer la entrada
+    fflush(stdout);
     
     char* input = lectura_infinita();
-    size_t count = 0;
 
-    if (input == NULL) {
-        return NULL; // Error en la lectura
+    if (input == NULL || strlen(input) == 0) {
+        if (input != NULL) {
+            free(input);
+        }
+        // Devuelve una estructura vacia en caso de error
+        ArgArray empty = {NULL, 0, 0};
+        return empty;
     }
-
-    if (strlen(input) == 0) {
-        arr[0] = NULL;
-        free(input);
-        return 0;
-    }
-
-    char *token = strtok(input, " "); //divide la cadena en tokens separados por espacios
-    while (token != NULL && count < MAX_STRINGS - 1) {
-        arr[count] = token; //almacena cada token en el arreglo
-        token = strtok(NULL, " "); //obtiene el siguiente token
-        count++;
-    }
-
-    arr[count] = NULL; // Termina el array con NULL para execvp
     
-    return input; // Devuelve el puntero para poder hacer free() después
+    // Llama a la funcion guardaArgumentos y pasa la entrada
+    ArgArray result = guardaArgumentos(input);
+    
+    // Libera la cadena de entrada una vez que se tokenizo
+    free(input);
+
+    return result;
 }
+
+

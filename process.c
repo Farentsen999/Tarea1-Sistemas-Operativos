@@ -1,4 +1,3 @@
-//Recordar listar casos limite, incluir << y >> y documentar codigo
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -6,38 +5,26 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
-void ejecutar_comando(char **args) {
+#include "struct.h"
+#include "redirections.h"
+
+// Función para ejecutar un comando sin pipes
+void ejecutar_comando(ArgArray *cmd) {
     pid_t pid = fork();
     if (pid < 0) {
         perror("Error en fork()");
-        exit(1);
+        exit(EXIT_FAILURE);
     } else if (pid == 0) {
-        /*/
-        if(inputFile != NULL) {
-            int descriptorArchivoEntrada = open(inputFile, O_RDONLY);
-            if (descriptorArchivoEntrada < 0) {
-                perror("Error al abrir archivo de entrada");
-                _exit(1);
-            }
-            dup2(descriptorArchivoEntrada, STDIN_FILENO);
-            close(descriptorArchivoEntrada);
-        }
+        // Proceso hijo
+        
+        // Redirecciones si es necesario
+        setup_redirections(cmd->inputFile, cmd->outputFile);
 
-        if(outputFile != NULL) {
-            int descriptorArchivoSalida = open(outputFile, O_WRONLY | O_TRUNC | O_CREAT, 0644);
-            if (descriptorArchivoSalida < 0) {
-                perror("Error al abrir/crear archivo de salida");
-                _exit(1);
-            }
-            dup2(descriptorArchivoSalida, STDOUT_FILENO);
-            close(descriptorArchivoSalida);
-        }
-        /*/
-        execvp(args[0], args); 
+        // Ejecuta el comando
+        execvp(cmd->cadenas[0], cmd->cadenas);
         perror("Error, comando no encontrado");
-        _exit(1);
-    }
-    else {
+        _exit(EXIT_FAILURE);
+    } else {
         wait(NULL);
     }
 }
