@@ -1,7 +1,12 @@
+// parser.h
+
 #ifndef PARSER_H
 #define PARSER_H
-#define MAX_ARGS 64
 
-void commandParser(char *inputTokens[], char *args[], char **inputFile, char **outputFile);
+#include <stddef.h>
+#include "struct.h"
+
+// Firma corregida
+void commandParser(ArgArray *cmd);
 
 #endif
