@@ -7,9 +7,16 @@
 #include <signal.h>
 #include <sys/resource.h>
 #include <sys/time.h>
+#include <stdbool.h>
+#include "struct.h"
+#include "parser.h"
+#include "pipes.h"
+#include "process.h"
 
 // Variable global para manejar el PID del proceso hijo
 pid_t child_pid = -1;
+ArgArray* crear_argarray_comando(char **comando);
+
 
 // Manejador de la señal SIGALRM para el timeout, esto termina el proceso hijo y el padre
 void timeout_handler(int sig) {
@@ -66,6 +73,15 @@ void ejecutar_miprof(char **arr) {
         return;
     }
     
+    // Verificar si hay pipes en el comando
+    bool tiene_pipes = false;
+    for (int i = 0; comando[i] != NULL; i++) {
+        if (strcmp(comando[i], "|") == 0) {
+            tiene_pipes = true;
+            break;
+        }
+    }
+    
     // Medir tiempo real
     struct timeval start_time, end_time;
     gettimeofday(&start_time, NULL);
@@ -95,10 +111,25 @@ void ejecutar_miprof(char **arr) {
             close(fd);
         }
 
-        // Ejecutar el comando
-        execvp(comando[0], comando);
-        perror("execvp fallo");
-        exit(EXIT_FAILURE);
+        // Si hay pipes, usar el sistema de pipes existente
+        if (tiene_pipes) {
+            ArgArray *cmd_temp = crear_argarray_comando(comando);
+            if (cmd_temp) {
+                commandParser(cmd_temp);
+                if (cmd_temp->pipeCount > 0) {
+                    exec_with_pipes(cmd_temp);
+                } else {
+                    ejecutar_comando(cmd_temp);
+                }
+                freeArgArray(cmd_temp);
+                free(cmd_temp);
+            }
+            exit(EXIT_FAILURE); // Si exec falla
+        } else {
+            execvp(comando[0], comando);
+            perror("execvp fallo");
+            exit(EXIT_FAILURE);
+        }
     } else {
         // Proceso Padre
 
@@ -171,4 +202,51 @@ void ejecutar_miprof(char **arr) {
             printf("Memoria máxima: %ld KB\n", usage.ru_maxrss);
         }
     }
+}
+
+ArgArray* crear_argarray_comando(char **comando) {
+    ArgArray *cmd_temp = malloc(sizeof(ArgArray));
+    if (!cmd_temp) {
+        perror("Error al asignar memoria para ArgArray temporal");
+        return NULL;
+    }
+    
+    initializeArgArray(cmd_temp);
+    
+    int count = 0;
+    while (comando[count] != NULL) {
+        count++;
+    }
+    
+    // Asigna memoria para los strings 
+    cmd_temp->cadenas = malloc((count + 1) * sizeof(char*));
+    if (!cmd_temp->cadenas) {
+        perror("Error al asignar memoria para cadenas");
+        free(cmd_temp);
+        return NULL;
+    }
+    
+    // Copia los argumentos
+    for (int i = 0; i < count; i++) {
+
+        cmd_temp->cadenas[i] = strdup(comando[i]);
+
+        if (!cmd_temp->cadenas[i]) {
+            perror("Error al duplicar cadena");
+            for (int j = 0; j < i; j++) {
+                free(cmd_temp->cadenas[j]);
+            }
+
+            free(cmd_temp->cadenas);
+            free(cmd_temp);
+            return NULL;
+        }
+
+    }
+
+    cmd_temp->cadenas[count] = NULL;
+    cmd_temp->count = count;
+    cmd_temp->capacity = count;
+    
+    return cmd_temp;
 }

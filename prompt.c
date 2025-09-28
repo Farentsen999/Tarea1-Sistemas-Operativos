@@ -102,7 +102,7 @@ ArgArray leer_y_split() {
     ArgArray result = guardaArgumentos(input);
     
     // Libera la cadena de entrada una vez que se tokenizo
-    //free(input);
+    free(input);
 
     return result;
 }
