@@ -7,7 +7,7 @@
 #include "parser.h"
 #include "struct.h"
 
-// Esta funcion parsea los comandos para manejar pipes y redirecciones..
+// Esta funcion parsea los comandos para manejar pipes y redirecciones
 void commandParser(ArgArray *cmd) {
     // Variables para el conteo de argumentos y comandos del pipe
     int arg_count = 0;
