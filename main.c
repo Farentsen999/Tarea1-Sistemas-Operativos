@@ -24,7 +24,7 @@ int main(void) {
         // Comando para salir del shell
         if (strcmp(cmd_data.cadenas[0], "exit") == 0) {
             freeArgArray(&cmd_data);
-            break;
+           _exit(EXIT_SUCCESS);
         }
 
         // Comando para ejecutar miprof
