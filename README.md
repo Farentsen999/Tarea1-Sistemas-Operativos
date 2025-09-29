@@ -1,13 +1,19 @@
-# Comando a ejecutar
+# Inicializar shell
 
-- make, para compilar todo el código
+- Ingresar make myprog, para compilar todo el código.
+- usar ./myprog para correr el ejecutable, a partir de aqui, sera nuestra shell la que reciba los comandos.
+
+# Consideraciones
+- A la hora de hacer piping, es necesario utilizar espacios antes y despues de "|", por ejemplo: "ps -aux | sort -nrk 4 | head -10".
+- A la hora de ingresar comandos que involucren guardado de archivos, por ejemplo, "miprof ejecsave output.txt date", para que output.txt aparezca en el directorio
+donde se encuentran los modulos de la shell, podria ser necesario actualizar el IDE (En la mayoria de IDE's basta con hacer click izquierdo en cualquier modulo ".c" para actualizar el directorio) 
   
-## comando miprof
+## Sobre el comando miprof
 
--miprof y se puede continuar con:
+- "miprof" se puede continuar con:
 
--ejec: Para ejecutar el comando y qué te imprima el resultado por pantalla
+- "ejec": Para ejecutar el comando y qué te imprima el resultado por pantalla.
 
--ejesave text.txt': para o abrir o guardar dentro de un archivo el comando ejecutado, su resultado, y tiempo de ejecución
+- "ejecsave text.txt": para o abrir o guardar dentro de un archivo el comando ejecutado, su resultado, y tiempo de ejecución.
 
--maxtiempo "numero": para establer un tiempo maxímo cuanto tiempo puede tardar los comandos en ejecutarse.
+- "maxtiempo 'numero'": para establer un tiempo maxímo cuanto tiempo puede tardar los comandos en ejecutarse.
