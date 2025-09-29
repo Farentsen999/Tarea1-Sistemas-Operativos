@@ -5,6 +5,7 @@
 
 # Consideraciones
 - A la hora de hacer piping, es necesario utilizar espacios antes y despues de "|", por ejemplo: "ps -aux | sort -nrk 4 | head -10".
+- A la hora de usar comandos para ingresar datos a un archivo o extraer datos de un archivo, es necesario utiizar espacios antes y despues de ">" y "<" respectivamente, por ejemplo: echo hola mundo > archivo.txt o wc -l < archivo.txt (mencionar que al usar > se sobreescribe lo que esta en el archivo correspondiente)
 - A la hora de ingresar comandos que involucren guardado de archivos, por ejemplo, "miprof ejecsave output.txt date", para que output.txt aparezca en el directorio
 donde se encuentran los modulos de la shell, podria ser necesario actualizar el IDE (En la mayoria de IDE's basta con hacer click izquierdo en cualquier modulo ".c" para actualizar el directorio) 
   
